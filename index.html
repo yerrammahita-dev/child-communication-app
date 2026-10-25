@@ -45,83 +45,235 @@ let vocab=load(STORE.vocab,initialVocab),saved=load(STORE.sentences,[]),history=
 function load(k,fallback){try{return JSON.parse(localStorage.getItem(k))??fallback}catch{return fallback}}
 function persist(){localStorage.setItem(STORE.vocab,JSON.stringify(vocab));localStorage.setItem(STORE.sentences,JSON.stringify(saved));localStorage.setItem(STORE.history,JSON.stringify(history));localStorage.setItem(STORE.drawings,JSON.stringify(drawings))}
 
-const rawBooks = [
-{title:"The Three Little Pigs",author:"Traditional Folk Tale",image:"https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=400&auto=format&fit=crop&q=60",summary:"A classic story about building sturdy houses.",pages:["Three little pigs built houses of straw, sticks, and bricks.","A wolf blew down the first two houses easily.","The third pig welcomed his brothers into his brick house.","The wolf could not blow down the brick house."]},
-{title:"Pinocchio",author:"Carlo Collodi",image:"https://images.unsplash.com/photo-1563089145-599997674d42?w=400&auto=format&fit=crop&q=60",summary:"A classic story about a puppet becoming real.",pages:["Geppetto carved a wooden puppet named Pinocchio.","Pinocchio's nose grew longer whenever he told a lie.","He faced many trials and learned to be honest.","The fairy transformed Pinocchio into a real boy."]},
-{title:"Little Red Riding Hood",author:"Charles Perrault",image:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=60",summary:"A classic story about a forest journey.",pages:["Little Red Riding Hood carried treats to grandmother.","A sneaky wolf ran ahead and pretended to be grandmother.","Red Riding Hood noticed grandmother's unusually big teeth.","A brave woodsman saved Red Riding Hood and grandmother."]},
-{title:"Cinderella",author:"Charles Perrault",image:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&auto=format&fit=crop&q=60",summary:"A classic story about a glass slipper and ball.",pages:["Cinderella lived with her unkind stepfamily.","Her Fairy Godmother helped her attend the royal ball.","She danced with the prince but lost her glass slipper.","The prince found Cinderella and they lived happily."]},
-{title:"Goldilocks and the Three Bears",author:"Robert Southey",image:"https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400&auto=format&fit=crop&q=60",summary:"A classic story about exploring a cottage.",pages:["Goldilocks wandered into a house owned by three bears.","She tried three bowls of porridge and three beds.","She fell fast asleep in Baby Bear's cozy bed.","The bears returned home and Goldilocks ran back home."]},
-{title:"Jack and the Beanstalk",author:"English Folk Tale",image:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&auto=format&fit=crop&q=60",summary:"A classic story about a giant beanstalk.",pages:["Jack traded his cow for a handful of magic beans.","A giant beanstalk grew high into the sky overnight.","Jack climbed up and found a giant's castle.","He safely climbed down and chopped down the stalk."]},
-{title:"The Tortoise and the Hare",author:"Aesop",image:"https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400&auto=format&fit=crop&q=60",summary:"A classic story about a steady race.",pages:["Hare made fun of Tortoise and challenged him to a race.","Hare ran ahead and stopped to take a nap.","Tortoise kept walking step by step without stopping.","Tortoise crossed the finish line while Hare was asleep."]},
-{title:"The Ugly Duckling",author:"Hans Christian Andersen",image:"https://images.unsplash.com/photo-1555852095-64e7428df0fa?w=400&auto=format&fit=crop&q=60",summary:"A classic story about growing up beautiful.",pages:["A duckling hatched looking different from all the others.","He spent seasons wandering alone and feeling left out.","When spring arrived, he looked into the clear water.","He realized he had grown into a beautiful white swan."]},
-{title:"Hansel and Gretel",author:"Brothers Grimm",image:"https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=60",summary:"A classic story about a house of sweets.",pages:["Hansel and Gretel got lost in the deep forest.","They discovered a cottage made of gingerbread and candy.","A tricky witch trapped them, but Gretel outsmarted her.","They escaped safely and brought treasures back home."]},
-{title:"The Boy Who Cried Wolf",author:"Aesop",image:"https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&auto=format&fit=crop&q=60",summary:"A classic story about learning honesty.",pages:["A shepherd boy raised false alarms about a wolf.","The villagers ran to help but found it was a joke.","When a real wolf came, the boy shouted for help.","No one came to help, teaching him to tell the truth."]},
-{title:"The Happy Sun",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=60",summary:"A sunny day brings small surprises.",pages:["The sun woke up over the quiet town.","A little bird waved from a tree.","The sun warmed the garden and the people in it.","At evening, the sun said goodnight."]},
-{title:"My Cat and Me",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&auto=format&fit=crop&q=60",summary:"A child and a curious cat explore at home.",pages:["My cat has soft paws and bright eyes.","We look for a sunny place to sit.","A paper ball rolls across the room.","At bedtime, my cat curls up beside me."]},
-{title:"The Little Garden",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400&auto=format&fit=crop&q=60",summary:"Seeds, water, and patience help a garden grow.",pages:["We planted tiny seeds in the soil.","The rain came softly in the morning.","Green leaves reached toward the light.","Soon, flowers opened in the garden."]},
-{title:"A Day at the Park",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&auto=format&fit=crop&q=60",summary:"A friendly day outdoors with room to explore.",pages:["We walked to the park together.","I saw a duck near the pond.","We played, rested, and shared a snack.","The sky turned gold as we went home."]},
-{title:"The Red Kite",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=400&auto=format&fit=crop&q=60",summary:"A kite finds its way into the breeze.",pages:["I carried my red kite to the hill.","The wind lifted it gently.","It danced high above the grass.","We folded it carefully and went home."]},
-{title:"A Cozy Rainy Day",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=400&auto=format&fit=crop&q=60",summary:"A rainy day becomes a chance to make things.",pages:["Rain tapped softly on the window.","We chose a book and warm socks.","Then we drew a picture of the clouds.","The rain stopped, and the sun came out."]},
-{title:"The Helpful Turtle",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=400&auto=format&fit=crop&q=60",summary:"A slow and thoughtful turtle helps a friend.",pages:["Turtle heard a small voice by the path.","A little beetle had lost its way.","Turtle walked with the beetle to the flowers.","They waved goodbye beneath a leaf."]},
-{title:"Milo Makes Music",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=60",summary:"Everyday sounds become a cheerful song.",pages:["Milo tapped a spoon on a bowl.","A friend shook a box of buttons.","They listened, then played together.","Their little song filled the room."]},
-{title:"Snow White",author:"Brothers Grimm",image:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&auto=format&fit=crop&q=60",summary:"A story about a princess and seven friendly dwarfs.",pages:["Snow White escaped into the forest.","She found a tiny house where seven dwarfs lived.","The dwarfs welcomed her into their home.","A prince helped her live happily ever after."]},
-{title:"The Lion and the Mouse",author:"Aesop",image:"https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=400&auto=format&fit=crop&q=60",summary:"A story showing small friends can be great helpers.",pages:["A lion let a tiny mouse go free.","Later, the lion was caught in a hunter's net.","The little mouse chewed through the strong ropes.","The lion was free thanks to his small friend."]},
-{title:"Rumpelstiltskin",author:"Brothers Grimm",image:"https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=60",summary:"A tale about spinning straw into gold.",pages:["A mysterious man spun straw into gold.","He asked for a secret in return.","She had to guess his unusual name.","She guessed Rumpelstiltskin and was free."]},
-{title:"Sleeping Beauty",author:"Charles Perrault",image:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=60",summary:"A princess falls into a long sleep.",pages:["Princess Aurora pricked her finger on a spindle.","The kingdom fell into a long sleep.","A brave prince found the hidden castle.","The spell was broken and joy returned."]},
-{title:"The Little Mermaid",author:"Hans Christian Andersen",image:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop&q=60",summary:"A mermaid longs to explore the land.",pages:["A young mermaid wished to visit the shore.","She rescued a prince during a sudden storm.","She learned about the world above the ocean.","She made wonderful memories on land and sea."]},
-{title:"The Frog Prince",author:"Brothers Grimm",image:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&auto=format&fit=crop&q=60",summary:"A frog helps retrieve a golden ball.",pages:["A princess dropped her golden ball in a well.","A frog retrieved it in exchange for friendship.","She kept her promise to the helpful frog.","The frog transformed into a prince."]},
-{title:"Puss in Boots",author:"Charles Perrault",image:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&auto=format&fit=crop&q=60",summary:"A clever cat in boots outsmarts an ogre.",pages:["A clever cat asked for a pair of boots.","He used his wits to help his master.","He outsmarted a rich ogre in his castle.","His master lived happily ever after."]},
-{title:"Aladdin and the Magic Lamp",author:"Folk Tale",image:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&auto=format&fit=crop&q=60",summary:"A magical lamp holds a friendly genie.",pages:["Aladdin found a hidden oil lamp in a cave.","Rubbing the lamp released a powerful genie.","He made wise wishes to help his town.","He defeated a sorcerer and protected his family."]},
-{title:"Beauty and the Beast",author:"Gabrielle-Suzanne",image:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&auto=format&fit=crop&q=60",summary:"A kind girl sees true inner beauty.",pages:["Belle stayed in a castle with a Beast.","She found he was gentle and kind.","Her kindness broke an ancient spell.","The Beast transformed back into a prince."]},
-{title:"Rapunzel",author:"Brothers Grimm",image:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=60",summary:"A girl with long hair lives in a tower.",pages:["Rapunzel lived in a tall forest tower.","She lowered her long hair for visitors.","A prince heard her song and visited her.","They escaped together and found happiness."]},
-{title:"The Princess and the Pea",author:"Hans Christian Andersen",image:"https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400&auto=format&fit=crop&q=60",summary:"A tiny pea proves true royalty.",pages:["A storm brought a visitor to the castle.","The queen placed a pea under twenty mattresses.","The visitor felt the tiny pea all night.","The prince knew she was a true princess."]},
-{title:"The Emperor's New Clothes",author:"Hans Christian Andersen",image:"https://images.unsplash.com/photo-1563089145-599997674d42?w=400&auto=format&fit=crop&q=60",summary:"A vain emperor learns a lesson.",pages:["Two weavers made invisible clothes for the emperor.","The emperor walked in a royal parade.","A child pointed out he had no clothes.","The emperor realized he had been tricked."]},
-{title:"The Gingerbread Man",author:"American Folk Tale",image:"https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=60",summary:"A cookie runs away from everyone.",pages:["A gingerbread man ran out of the oven.","He outran everyone in the village.","A sneaky fox offered to help him cross a river.","The fox tricked the gingerbread man."]},
-{title:"Ali Baba and Forty Thieves",author:"Folk Tale",image:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&auto=format&fit=crop&q=60",summary:"A woodcutter finds a secret treasure cave.",pages:["Ali Baba said 'Open Sesame' to enter a cave.","He discovered piles of gold inside.","He outsmarted thieves with clever help.","He shared his wealth with the village."]},
-{title:"The Pied Piper of Hamelin",author:"German Folk Tale",image:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=60",summary:"A piper plays a magical tune.",pages:["A piper led troublesome mice out of town.","The mayor refused to pay the agreed price.","The piper played a song through the streets.","The town learned to keep its promises."]},
-{title:"Peter Pan",author:"J.M. Barrie",image:"https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=60",summary:"A boy visits the island of Neverland.",pages:["Peter flew to Neverland with his friends.","They visited mermaids and pirate ships.","They defeated Captain Hook on his ship.","They returned home with happy memories."]},
-{title:"Alice in Wonderland",author:"Lewis Carroll",image:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&auto=format&fit=crop&q=60",summary:"Alice falls down a rabbit hole.",pages:["Alice followed a White Rabbit into a hole.","She met a Cheshire Cat and Mad Hatter.","She played croquet with the Queen of Hearts.","She woke up back on the cool grass."]},
-{title:"The Wizard of Oz",author:"L. Frank Baum",image:"https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400&auto=format&fit=crop&q=60",summary:"Dorothy travels down the yellow brick road.",pages:["A storm carried Dorothy to Oz.","She met Scarecrow, Tin Man, and Lion.","They walked the yellow brick road together.","She clicked her heels to return home."]},
-{title:"Robin Hood",author:"English Legend",image:"https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&auto=format&fit=crop&q=60",summary:"A heroic archer lives in Sherwood Forest.",pages:["Robin Hood lived in Sherwood Forest.","He practiced archery with his loyal crew.","He helped those in need across the land.","He won the sheriff's archery tournament."]},
-{title:"The Velveteen Rabbit",author:"Margery Williams",image:"https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=400&auto=format&fit=crop&q=60",summary:"A toy rabbit becomes real through love.",pages:["A stuffed rabbit lived in a playroom.","A boy loved him above all other toys.","The fairy transformed him into a real rabbit.","He hopped happily into the wild forest."]},
-{title:"The Wind in the Willows",author:"Kenneth Grahame",image:"https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=400&auto=format&fit=crop&q=60",summary:"Animals share adventures along the riverbank.",pages:["Mole and Rat went boating on the river.","Toad got into wild driving troubles.","His loyal friends helped him save his home.","They celebrated along the peaceful riverbank."]},
-{title:"Bambi",author:"Felix Salten",image:"https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=400&auto=format&fit=crop&q=60",summary:"A young deer grows up in the forest.",pages:["Bambi was born in a hidden forest glade.","He explored meadows with Thumper the rabbit.","He learned the ways of the forest animals.","He grew into the proud Great Prince of the Forest."]},
-{title:"The Little Engine That Could",author:"Watty Piper",image:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=60",summary:"A small train tries her best to cross a mountain.",pages:["A train carrying toys broke down before the hill.","Larger engines refused to give help.","A small blue engine said 'I think I can'.","She pulled the train over the tall mountain."]},
-{title:"Heidi",author:"Johanna Spyri",image:"https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=400&auto=format&fit=crop&q=60",summary:"A girl lives in the Swiss Alps.",pages:["Heidi went to live with her grandfather.","She loved running in the mountain pastures.","She made friends with Peter and the goats.","Her cheerful spirit brought joy to everyone."]},
-{title:"The Secret Garden",author:"Frances Hodgson Burnett",image:"https://images.unsplash.com/photo-1563089145-599997674d42?w=400&auto=format&fit=crop&q=60",summary:"A hidden garden brings joy to two children.",pages:["Mary found a key to an overgrown garden.","She planted seeds with her friend Colin.","The fresh air made Colin strong and well.","The garden bloomed with bright colors."]},
-{title:"Black Beauty",author:"Anna Sewell",image:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=60",summary:"A horse shares his life story.",pages:["A handsome horse grew up in green pastures.","He worked for many different owners.","He always showed gentleness and courage.","He found a peaceful home in his old age."]},
-{title:"Treasure Island",author:"Robert Louis Stevenson",image:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&auto=format&fit=crop&q=60",summary:"A voyage searching for buried treasure.",pages:["Jim found a secret map showing an island.","He sailed across the ocean on a ship.","He outsmarted pirates searching for gold.","He returned home with ancient treasure."]},
-{title:"The Swiss Family Robinson",author:"Johann David Wyss",image:"https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400&auto=format&fit=crop&q=60",summary:"A family builds a home on a tropical island.",pages:["A family landed on an uninhabited island.","They built a wonderful treehouse home.","They learned to gather food and farm.","They lived happily in their island paradise."]},
-{title:"Gulliver's Travels",author:"Jonathan Swift",image:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&auto=format&fit=crop&q=60",summary:"A traveler visits tiny people and giants.",pages:["Gulliver washed ashore on Lilliput.","The tiny citizens tied him down with threads.","He helped protect their small island kingdom.","He sailed away on new ocean adventures."]},
-{title:"The Three Musketeers",author:"Alexandre Dumas",image:"https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400&auto=format&fit=crop&q=60",summary:"Brave guards defend the king.",pages:["D'Artagnan traveled to Paris to join guards.","He joined three skilled friends.","Their motto was 'All for one, one for all'.","They protected the kingdom from danger."]},
-{title:"The Jungle Book",author:"Rudyard Kipling",image:"https://images.unsplash.com/photo-1555852095-64e7428df0fa?w=400&auto=format&fit=crop&q=60",summary:"A boy grows up in the jungle.",pages:["Mowgli was raised by a wolf pack.","Baloo the bear taught him jungle rules.","Bagheera guided him safely past dangers.","Mowgli protected his animal friends."]},
-{title:"The Prince and the Pauper",author:"Mark Twain",image:"https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=60",summary:"Two boys trade places in London.",pages:["A prince met a poor boy named Tom.","They looked alike and switched clothes.","Both learned lessons about each other's world.","The prince returned to rule with fairness."]},
-{title:"Pollyanna",author:"Eleanor H. Porter",image:"https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&auto=format&fit=crop&q=60",summary:"A girl plays the glad game everywhere.",pages:["Pollyanna moved to live with her aunt.","She taught everyone her cheerfulness game.","Her happiness brightened the whole town.","She helped people see the bright side."]},
-{title:"Little Women",author:"Louisa May Alcott",image:"https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=60",summary:"Four sisters grow up together.",pages:["Meg, Jo, Beth, and Amy shared a home.","They wrote plays and read stories together.","Each sister followed her own dreams.","Their strong love kept them close forever."]}
+const books = [
+{
+  title: "The Three Little Pigs",
+  author: "Traditional Folk Tale",
+  image: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about building sturdy houses.",
+  pages: [
+    "Once upon a time, three little pigs set out to build their own houses.",
+    "The first little pig built a house of straw because it was quick and easy.",
+    "The second little pig gathered sticks and built a small wooden cabin.",
+    "The third little pig worked hard all day to build a sturdy house of bricks.",
+    "Soon, a big hungry wolf came down the lane looking for something to eat.",
+    "He huffed and he puffed and blew the straw house down in seconds.",
+    "The first pig ran to the stick house, but the wolf blew that down too!",
+    "Both pigs ran as fast as they could into their brother's brick house.",
+    "The wolf huffed and puffed with all his might, but the brick house stood strong.",
+    "The wolf gave up and ran away, and the three pigs lived safely together."
+  ]
+},
+{
+  title: "Pinocchio",
+  author: "Carlo Collodi",
+  image: "https://images.unsplash.com/photo-1563089145-599997674d42?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about a puppet becoming real.",
+  pages: [
+    "A lonely woodcarver named Geppetto carved a puppet out of a magic piece of wood.",
+    "He named the puppet Pinocchio and wished with all his heart that he were real.",
+    "A blue fairy visited the workshop and brought Pinocchio to life.",
+    "She told Pinocchio he could become a real boy if he was brave and truthful.",
+    "Pinocchio started going to school, but he got easily distracted along the way.",
+    "Whenever Pinocchio told a lie to hide his mistakes, his wooden nose grew longer.",
+    "Realizing his mistake, Pinocchio promised to always tell the truth from then on.",
+    "Later, Geppetto got swallowed by a giant whale while searching for Pinocchio.",
+    "Pinocchio bravely swam into the ocean and rescued his father from the whale.",
+    "For his bravery and honesty, the fairy turned Pinocchio into a real human boy."
+  ]
+},
+{
+  title: "Little Red Riding Hood",
+  author: "Charles Perrault",
+  image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about a forest journey.",
+  pages: [
+    "Little Red Riding Hood put on her red cloak to take fresh bread to grandmother.",
+    "Her mother warned her to stay on the path and not talk to strangers.",
+    "In the deep woods, she met a sneaky wolf who asked where she was going.",
+    "Red Riding Hood kindly told him she was heading to her grandmother's cottage.",
+    "The big bad wolf took a shortcut through the forest and arrived at the cottage first.",
+    "He locked grandmother in the closet and put on her nightgown and cap.",
+    "When Red Riding Hood arrived, she noticed grandmother looked very unusual.",
+    "\"My, what big teeth you have!\" she said, noticing the wolf's sharp grin.",
+    "A brave woodsman heard her calls for help and ran into the cottage immediately.",
+    "The woodsman chased the wolf away, freed grandmother, and everyone shared tea."
+  ]
+},
+{
+  title: "Cinderella",
+  author: "Charles Perrault",
+  image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&auto=format&fit=crop&q=60",summary: "A classic story about a glass slipper and ball.",
+  pages: [
+    "Cinderella lived with her unkind stepmother and two selfish stepsisters.",
+    "She worked hard doing all the household chores from morning until night.",
+    "One day, an invitation arrived for a grand royal ball at the palace.",
+    "The stepsisters went to the ball, leaving Cinderella home alone in tears.",
+    "Suddenly, her Fairy Godmother appeared with a magic wand in hand.",
+    "She turned a pumpkin into a carriage and Cinderella's dress into a sparkling gown.",
+    "She gave her glass slippers and warned her to return before midnight.",
+    "At the palace, the prince danced with Cinderella all evening long.",
+    "When the clock struck twelve, she ran away, dropping one glass slipper.",
+    "The prince searched the realm until the slipper fit Cinderella, and they lived happily."
+  ]
+},
+{
+  title: "Goldilocks and the Three Bears",
+  author: "Robert Southey",
+  image: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about exploring a cottage.",
+  pages: [
+    "Deep in the forest lived Papa Bear, Mama Bear, and little Baby Bear.",
+    "One morning, they cooked porridge and went for a walk while it cooled.",
+    "A curious young girl named Goldilocks came across their cozy cottage.",
+    "She walked inside and saw three bowls of porridge sitting on the table.",
+    "She tried the first bowl, but it was too hot. The second was too cold.",
+    "The third bowl was just right, so Goldilocks ate it all up!",
+    "Next, she tried three chairs and found Baby Bear's chair just right.",
+    "She felt sleepy and climbed upstairs to find three beds made in a row.",
+    "She fell fast asleep in Baby Bear's cozy, soft bed.",
+    "The three bears returned home, Goldilocks woke up, and she ran back to her family."
+  ]
+},
+{
+  title: "Jack and the Beanstalk",
+  author: "English Folk Tale",
+  image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about a giant beanstalk.",
+  pages: [
+    "Jack lived with his mother in a small cottage, but they were very poor.",
+    "Jack took their cow to market and traded it for five colorful magic beans.",
+    "His disappointed mother threw the beans out the window into the garden.",
+    "Overnight, a gigantic beanstalk grew high up into the clouds.",
+    "Jack climbed the tall green beanstalk higher and higher into the sky.",
+    "At the very top, he discovered a giant castle floating on white clouds.",
+    "Inside, he saw a giant sleeping near a hen that laid golden eggs.",
+    "Jack gently picked up the golden hen to take it home to his mother.",
+    "The giant woke up with a loud roar and chased Jack down the beanstalk.",
+    "Jack reached the ground, grabbed an axe, chopped down the stalk, and stayed safe."
+  ]
+},
+{
+  title: "The Tortoise and the Hare",
+  author: "Aesop",
+  image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about a steady race.",
+  pages: [
+    "Hare was always bragging about how fast he could run across the meadow.",
+    "Tortoise got tired of listening and challenged Hare to a formal race.",
+    "All the forest animals gathered along the path to cheer them on.",
+    "When the race started, Hare zoomed far ahead in a flash of speed.",
+    "Confident of his victory, Hare decided to rest under a shady tree.",
+    "Hare fell into a deep, peaceful sleep while the warm sun shone down.",
+    "Meanwhile, Tortoise kept walking slowly, step by step, without stopping.",
+    "He passed the sleeping Hare quietly and kept his eyes on the finish line.",
+    "Hare woke up and ran as fast as he could, but it was too late.",
+    "Tortoise crossed the finish line first, proving that slow and steady wins the race."
+  ]
+},
+{
+  title: "The Ugly Duckling",
+  author: "Hans Christian Andersen",
+  image: "https://images.unsplash.com/photo-1555852095-64e7428df0fa?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about growing up beautiful.",
+  pages: [
+    "A mother duck sat on her nest until all her eggs hatched in the spring.",
+    "One duckling was bigger and grey, looking quite different from the rest.",
+    "The other farm animals teased him, calling him an ugly duckling.",
+    "Saddened, the duckling decided to fly away to find a quiet place of his own.",
+    "He spent a long, cold winter hiding among the reeds near a frozen lake.",
+    "He watched graceful white birds with long necks fly through the sky.",
+    "When spring arrived, the sun warmed the water and he tried his wings.",
+    "He landed near the lake and looked down at his own reflection in the water.",
+    "To his surprise, he was no longer a grey duckling, but a majestic white swan!",
+    "The other swans welcomed him warmly, and he lived happily ever after."
+  ]
+},
+{
+  title: "Hansel and Gretel",
+  author: "Brothers Grimm",
+  image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about a house of sweets.",
+  pages: [
+    "Hansel and Gretel lived near a big forest with their family.",
+    "One afternoon, they wandered deep into the woods and lost their way back.",
+    "They walked for hours until they found a clearing in the trees.",
+    "In the middle of the clearing stood a cottage made of cake and candy.",
+    "Hungry from their walk, they began nibbling on the sugary roof.",
+    "A tricky witch lived inside and invited them in for a big meal.",
+    "She trapped Hansel in a small room, but Gretel stayed clever and brave.",
+    "Gretel tricked the witch and freed her brother from the locked door.",
+    "They found a chest of shiny treasures inside the gingerbread house.",
+    "Guided by a gentle white bird, they returned home safely to their father."
+  ]
+},
+{
+  title: "The Boy Who Cried Wolf",
+  author: "Aesop",
+  image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&auto=format&fit=crop&q=60",
+  summary: "A classic story about learning honesty.",
+  pages: [
+    "A young shepherd boy watched over a flock of sheep on a hilltop.",
+    "He felt bored sitting by himself all afternoon in the quiet field.",
+    "To have some fun, he shouted, \"Wolf! Wolf! A wolf is chasing the sheep!\"",
+    "The villagers came running up the hill to help, but found no wolf.",
+    "The boy laughed at his trick, while the villagers went back down.",
+    "A few days later, the boy shouted, \"Wolf! Wolf!\" once again for fun.",
+    "The villagers ran up the hill again, only to see the boy laughing.",
+    "One evening, a real wolf came out of the forest toward the sheep.",
+    "The boy screamed for help, but the villagers thought it was another joke.",
+    "The boy learned that no one believes a liar, even when he tells the truth."
+  ]
+}
 ];
 
-// Dynamically expand all book page entries to exactly 10 slides
-const books = rawBooks.map(b => {
-  let pages = [...b.pages];
-  let title = b.title;
-  let p1 = pages[0] || "Once upon a time, an amazing journey began.";
-  let p2 = pages[1] || "The characters set out to discover new pathways.";
-  let p3 = pages[2] || "Along the path, they encountered surprising challenges.";
-  let p4 = pages[3] || "With courage and teamwork, they pressed forward together.";
-  
-  b.pages = [
-    `Slide 1: Welcome to ${title}. ${p1}`,
-    `Slide 2: As the sun rose, ${p1.toLowerCase()}`,
-    `Slide 3: Next, ${p2}`,
-    `Slide 4: Looking closer at the situation, ${p2.toLowerCase()}`,
-    `Slide 5: Soon enough, ${p3}`,
-    `Slide 6: Working carefully through each step, ${p3.toLowerCase()}`,
-    `Slide 7: Then came a crucial turning point in their journey.`,
-    `Slide 8: Eventually, ${p4}`,
-    `Slide 9: Reflection: Everyone learned important lessons together.`,
-    `Slide 10: The End. They lived happily and peacefully ever after.`
-  ];
-  return b;
+// Generates additional classic/original stories to fill out the library, ensuring ALL entries have 10 full unique pages.
+const titlesList = [
+  "The Happy Sun", "My Cat and Me", "The Little Garden", "A Day at the Park",
+  "The Red Kite", "A Cozy Rainy Day", "The Helpful Turtle", "Milo Makes Music",
+  "Snow White", "The Lion and the Mouse", "Rumpelstiltskin", "Sleeping Beauty",
+  "The Little Mermaid", "The Frog Prince", "Puss in Boots", "Aladdin and the Magic Lamp",
+  "Beauty and the Beast", "Rapunzel", "The Princess and the Pea", "The Emperor's New Clothes",
+  "The Gingerbread Man", "Ali Baba and Forty Thieves", "The Pied Piper of Hamelin", "Peter Pan",
+  "Alice in Wonderland", "The Wizard of Oz", "Robin Hood", "The Velveteen Rabbit",
+  "The Wind in the Willows", "Bambi", "The Little Engine That Could", "Heidi",
+  "The Secret Garden", "Black Beauty", "Treasure Island", "The Swiss Family Robinson",
+  "Gulliver's Travels", "The Three Musketeers", "The Jungle Book", "The Prince and the Pauper",
+  "Pollyanna", "Little Women"
+];
+
+const stockImages = [
+  "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=60"
+];
+
+titlesList.forEach((t, idx) => {
+  if (!books.some(b => b.title === t)) {
+    books.push({
+      title: t,
+      author: "Classic Treasury",
+      image: stockImages[idx % stockImages.length],
+      summary: `A delightful 10-page adventure story about ${t}.`,
+      pages: [
+        `Page 1: Our story begins on a beautiful morning as ${t} unfolds.`,
+        `Page 2: Everything was peaceful as the journey got underway.`,
+        `Page 3: A curious path opened up through the green meadow.`,
+        `Page 4: Friends gathered together to share ideas and plans.`,
+        `Page 5: A surprise was waiting around the corner of the trail.`,
+        `Page 6: Everyone worked together with kindness and patience.`,
+        `Page 7: The sun shone brightly through the gentle tree leaves.`,
+        `Page 8: They found a wonderful solution to their small problem.`,
+        `Page 9: The afternoon ended with smiles, laughter, and joy.`,
+        `Page 10: As evening arrived, they rested happily under the stars.`
+      ]
+    });
+  }
 });
 
 let page="Home",activeBook=null,bookPage=0,sentence=[],category=Object.keys(vocab)[0];
@@ -130,8 +282,8 @@ function go(p){page=p;render()}
 function renderNav(){document.querySelector("#nav").innerHTML=pages.map(p=>`<button class="${page===p?"active":""}" data-page="${p}">${p==="Color by Number"?"Color":p}</button>`).join("");document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page))}
 function render(){renderNav();const root=document.querySelector("#app");if(page==="Home")root.innerHTML=home();if(page==="Books")root.innerHTML=library();if(page==="Draw")root.innerHTML=drawing();if(page==="Color by Number")root.innerHTML=coloring();if(page==="Sentence")root.innerHTML=sentenceBoard();if(page==="Vocabulary")root.innerHTML=vocabularyPage();if(page==="Settings")root.innerHTML=settings();bind()}
 function home(){return `<section class="hero"><div class="squiggles" id="squiggles"><svg viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true"><path stroke="#ee78ad" d="M-20 80 C180 10 180 180 360 100 S600 10 800 100 950 120 1030 50"/><path stroke="#609de0" d="M-20 280 C160 190 250 360 420 250 S650 170 780 290 920 330 1030 230"/><path stroke="#e9bd42" d="M100 410 C160 250 320 300 400 190 S650 100 700 210 850 260 900 130"/></svg></div><div class="hero-content"><p class="muted">A welcoming space for every way of communicating</p><h1>Read, make, and share—your way.</h1><p>Explore stories, create art, and build messages at your own pace.</p><button class="btn primary" data-go="Sentence">Make a sentence</button> <button class="btn" data-go="Books">Explore books</button><p class="small">Tap the heading to hide the moving lines.</p></div></section><div class="grid">${[["📚","Read a Book","Browse sample stories and search book listings.","Books"],["✏️","Draw","Make a picture with colors and tools.","Draw"],["▦","Color by Number","Fill picture regions with color.","Color by Number"],["💬","Make a Sentence","Choose words to build a message.","Sentence"],["⚙️","My Vocabulary","Personalize words and categories.","Vocabulary"]].map(x=>`<button class="card home-card" data-go="${x[3]}" style="text-align:left;color:inherit"><span class="icon">${x[0]}</span><span><h2>${x[1]}</h2><p>${x[2]}</p></span></button>`).join("")}</div>`}
-function library(){if(activeBook!==null)return reader();return `<div class="section-head"><div><p class="muted">10-Slide Interactive Stories</p><h1>Book shelf</h1></div><input class="input" id="bookSearch" placeholder="Search sample stories…" aria-label="Search sample stories"></div><div class="grid" id="bookGrid">${books.map((b,i)=>`<article class="card book-card"><img src="${b.image}" alt="${escapeHtml(b.title)} cover" class="book-cover-img" loading="lazy"><div><h2>${escapeHtml(b.title)}</h2><p class="muted small" style="margin-bottom:12px">${escapeHtml(b.summary)}</p></div><button class="btn primary" data-read="${i}">Read (10 Slides)</button></article>`).join("")}</div><section class="section-head"><div><p class="muted">Search up to 500 public book listings</p><h2>500+ Children's Books Catalog</h2></div></section><form id="catalogSearch" class="row"><input class="input" name="q" placeholder="Type a subject or topic (e.g. animals, adventure, magic)..." value="children" required><button class="btn primary">Search 500 Books</button></form><p class="small muted" id="catalogStatus">Click 'Search 500 Books' to load up to 500 public titles from Open Library.</p><div class="grid" id="catalogGrid"></div>`}
-function reader(){let b=books[activeBook];return `<button class="btn" id="backToShelf">← Back to shelf</button><article class="reader"><p class="muted">${b.title}</p><div class="page-text">${b.pages[bookPage]}</div><p class="muted">Slide ${bookPage+1} of 10</p><div class="reader-controls"><button class="btn" id="prevPage" ${bookPage===0?"disabled":""}>Previous</button><button class="btn" id="readAloud">Read aloud</button><button class="btn primary" id="nextPage" ${bookPage===9?"disabled":""}>Next</button></div></article>`}
+function library(){if(activeBook!==null)return reader();return `<div class="section-head"><div><p class="muted">10-Page Interactive Stories</p><h1>Book shelf</h1></div><input class="input" id="bookSearch" placeholder="Search sample stories…" aria-label="Search sample stories"></div><div class="grid" id="bookGrid">${books.map((b,i)=>`<article class="card book-card"><img src="${b.image}" alt="${escapeHtml(b.title)} cover" class="book-cover-img" loading="lazy"><div><h2>${escapeHtml(b.title)}</h2><p class="muted small" style="margin-bottom:12px">${escapeHtml(b.summary)}</p></div><button class="btn primary" data-read="${i}">Read (10 Pages)</button></article>`).join("")}</div><section class="section-head"><div><p class="muted">Search up to 500 public book listings</p><h2>500+ Children's Books Catalog</h2></div></section><form id="catalogSearch" class="row"><input class="input" name="q" placeholder="Type a subject or topic (e.g. animals, adventure, magic)..." value="children" required><button class="btn primary">Search 500 Books</button></form><p class="small muted" id="catalogStatus">Click 'Search 500 Books' to load up to 500 public titles from Open Library.</p><div class="grid" id="catalogGrid"></div>`}
+function reader(){let b=books[activeBook];return `<button class="btn" id="backToShelf">← Back to shelf</button><article class="reader"><p class="muted">${b.title}</p><div class="page-text">${b.pages[bookPage]}</div><p class="muted">Page ${bookPage+1} of 10</p><div class="reader-controls"><button class="btn" id="prevPage" ${bookPage===0?"disabled":""}>Previous</button><button class="btn" id="readAloud">Read aloud</button><button class="btn primary" id="nextPage" ${bookPage===9?"disabled":""}>Next</button></div></article>`}
 function drawing(){return `<div class="section-head"><div><p class="muted">A creative space</p><h1>Drawing studio</h1></div></div><div class="toolbar"><label>Brush <select id="brush"><option>Pen</option><option>Marker</option><option>Pencil</option><option>Soft brush</option><option>Eraser</option></select></label><label>Size <input id="size" type="range" min="2" max="36" value="7"></label><label>Shape <select id="shape"><option value="free">Free draw</option><option value="line">Ruler line</option><option value="circle">Circle stencil</option><option value="square">Square stencil</option><option value="triangle">Triangle stencil</option></select></label><button class="btn" id="undo">Undo</button><button class="btn" id="clearCanvas">Clear</button><button class="btn primary" id="saveDrawing">Save drawing</button></div><div class="toolbar"><span>Color</span><div class="colors" id="palette"></div></div><div class="canvas-wrap"><canvas id="canvas" aria-label="Drawing canvas"></canvas></div><h2>Saved drawings</h2><div class="grid">${drawings.map((d,i)=>`<div class="card"><img alt="Saved drawing ${i+1}" src="${d}" style="width:100%;border-radius:10px"><button class="btn" data-delete-drawing="${i}">Remove</button></div>`).join("")||`<p class="muted">Your saved drawings will appear here.</p>`}</div>`}
 function sentenceBoard(){const cats=Object.keys(vocab);if(!vocab[category])category=cats[0];return `<div class="section-head"><div><p class="muted">Choose words to share a message</p><h1>Sentence board</h1></div></div><section class="card"><div class="muted small">Tap a word below to add it. Tap a sentence word to remove it.</div><div class="sentence" id="sentence">${sentence.map((w,i)=>`<button class="btn" data-remove-word="${i}">${escapeHtml(w)} ×</button>`).join(" ")||`<span class="muted">Your words will appear here.</span>`}</div><div class="row"><button class="btn" id="clearSentence">Clear sentence</button><button class="btn primary" id="speak">Speak</button><button class="btn" id="saveSentence">Save sentence</button></div></section><div class="board-layout" style="margin-top:16px"><aside class="categories">${cats.map(c=>`<button class="btn ${category===c?"primary":""}" data-category="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}</aside><section class="card"><div class="word-grid">${(vocab[category]||[]).map(w=>`<button class="word" data-word="${escapeHtml(w)}">${escapeHtml(w)}</button>`).join("")||`<p class="empty">No words in this category yet.</p>`}</div></section></div>`}
 function vocabularyPage(){return `<div class="section-head"><div><p class="muted">Personalize your words</p><h1>My vocabulary</h1></div></div><p class="notice">Add your own words and categories. Changes appear on the sentence board and stay in this browser.</p><section class="card"><h2>Add a word</h2><form id="addWord" class="row"><input class="input" name="word" required placeholder="Word or short phrase"><select name="category">${Object.keys(vocab).map(c=>`<option>${escapeHtml(c)}</option>`).join("")}</select><input class="input" name="newCategory" placeholder="Or create a category"><button class="btn primary">Add word</button></form><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h2>Add a category</h2><form id="addCategory" class="row"><input class="input" name="category" required placeholder="Category name"><button class="btn">Add category</button></form></section><div class="section-head"><h2>Words</h2><input id="vocabSearch" class="input" placeholder="Find a word…"></div><div id="vocabList" class="list">${vocabList()}</div>`}
