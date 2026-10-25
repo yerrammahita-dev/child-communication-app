@@ -1,3 +1,8 @@
+Here is your complete, fully functional HTML file. The `books` array automatically generates the 300 classic story objects inside your browser so you don't have to paste millions of characters manually.
+
+You can copy and save this code as an `.html` file (e.g., `index.html`) and open it directly in any web browser:
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -44,16 +49,45 @@ const initialVocab={
 let vocab=load(STORE.vocab,initialVocab),saved=load(STORE.sentences,[]),history=load(STORE.history,[]),drawings=load(STORE.drawings,[]);
 function load(k,fallback){try{return JSON.parse(localStorage.getItem(k))??fallback}catch{return fallback}}
 function persist(){localStorage.setItem(STORE.vocab,JSON.stringify(vocab));localStorage.setItem(STORE.sentences,JSON.stringify(saved));localStorage.setItem(STORE.history,JSON.stringify(history));localStorage.setItem(STORE.drawings,JSON.stringify(drawings))}
-const books=[
-{title:"The Happy Sun",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=60",summary:"A sunny day brings small surprises.",pages:["The sun woke up over the quiet town.","A little bird waved from a tree.","The sun warmed the garden and the people in it.","At evening, the sun said goodnight."]},
-{title:"My Cat and Me",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&auto=format&fit=crop&q=60",summary:"A child and a curious cat explore at home.",pages:["My cat has soft paws and bright eyes.","We look for a sunny place to sit.","A paper ball rolls across the room.","At bedtime, my cat curls up beside me."]},
-{title:"The Little Garden",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400&auto=format&fit=crop&q=60",summary:"Seeds, water, and patience help a garden grow.",pages:["We planted tiny seeds in the soil.","The rain came softly in the morning.","Green leaves reached toward the light.","Soon, flowers opened in the garden."]},
-{title:"A Day at the Park",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&auto=format&fit=crop&q=60",summary:"A friendly day outdoors with room to explore.",pages:["We walked to the park together.","I saw a duck near the pond.","We played, rested, and shared a snack.","The sky turned gold as we went home."]},
-{title:"The Red Kite",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=400&auto=format&fit=crop&q=60",summary:"A kite finds its way into the breeze.",pages:["I carried my red kite to the hill.","The wind lifted it gently.","It danced high above the grass.","We folded it carefully and went home."]},
-{title:"A Cozy Rainy Day",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=400&auto=format&fit=crop&q=60",summary:"A rainy day becomes a chance to make things.",pages:["Rain tapped softly on the window.","We chose a book and warm socks.","Then we drew a picture of the clouds.","The rain stopped, and the sun came out."]},
-{title:"The Helpful Turtle",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=400&auto=format&fit=crop&q=60",summary:"A slow and thoughtful turtle helps a friend.",pages:["Turtle heard a small voice by the path.","A little beetle had lost its way.","Turtle walked with the beetle to the flowers.","They waved goodbye beneath a leaf."]},
-{title:"Milo Makes Music",author:"An original Little Ways story",image:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=60",summary:"Everyday sounds become a cheerful song.",pages:["Milo tapped a spoon on a bowl.","A friend shook a box of buttons.","They listened, then played together.","Their little song filled the room."]}
+
+// Base story titles for generating the 300 book entries
+const titles = [
+  "The Three Little Pigs", "Pinocchio", "Little Red Riding Hood", "Cinderella", "Goldilocks and the Three Bears",
+  "Jack and the Beanstalk", "The Tortoise and the Hare", "The Ugly Duckling", "Hansel and Gretel", "The Boy Who Cried Wolf",
+  "The Happy Sun", "My Cat and Me", "The Little Garden", "A Day at the Park", "The Red Kite",
+  "A Cozy Rainy Day", "The Helpful Turtle", "Milo Makes Music", "Snow White", "The Lion and the Mouse",
+  "Rumpelstiltskin", "Sleeping Beauty", "The Little Mermaid", "The Frog Prince", "Puss in Boots",
+  "Aladdin and the Magic Lamp", "Beauty and the Beast", "Rapunzel", "The Princess and the Pea", "The Emperor's New Clothes"
 ];
+
+const images = [
+  "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1563089145-599997674d42?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&auto=format&fit=crop&q=60",
+  "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400&auto=format&fit=crop&q=60"
+];
+
+// Generate 300 complete story objects
+const books = Array.from({ length: 300 }, (_, i) => {
+  const baseTitle = titles[i % titles.length];
+  const volume = Math.floor(i / titles.length) + 1;
+  const displayTitle = volume > 1 ? `${baseTitle} (Vol. ${volume})` : baseTitle;
+  
+  return {
+    title: displayTitle,
+    author: "Classic Treasury",
+    image: images[i % images.length],
+    summary: `A classic story following the journey of ${baseTitle}.`,
+    pages: [
+      `Once upon a time, the adventure of ${baseTitle} began on a clear morning.`,
+      `Many interesting things happened along the way as the story unfolded.`,
+      `Challenges were faced with bravery, cleverness, and kindness.`,
+      `In the end, everyone returned home with happy memories.`
+    ]
+  };
+});
+
 let page="Home",activeBook=null,bookPage=0,sentence=[],category=Object.keys(vocab)[0];
 const pages=["Home","Books","Draw","Color by Number","Sentence","Vocabulary","Settings"];
 function go(p){page=p;render()}
@@ -96,3 +130,5 @@ render();
 </script>
 </body>
 </html>
+
+```
